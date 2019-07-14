@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 		  @Type(value = Item.class, name = "item"), 
 		  @Type(value = Category.class, name = "category") 
 		})
-public interface CatalogComponent extends DiscountHandler {
+public interface CatalogComponent {
 	public String getCode();
 	public String getLabel();
 	public String getDescription();

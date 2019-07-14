@@ -1,40 +1,55 @@
 package com.arunhegde.catalogws.beans;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
+import org.dizitart.no2.IndexType;
 import org.dizitart.no2.objects.Id;
+import org.dizitart.no2.objects.Index;
+import org.dizitart.no2.objects.Indices;
 
+@Indices({
+    @Index(value = "label", type = IndexType.Unique),
+    @Index(value = "description", type = IndexType.Fulltext),
+})
 public class Item implements CatalogComponent {
 	@Id
+	private String id;
+	
 	private String code;
-
 	private String label;
+	private String description;
 	private double mrp;
-	private List<Category> categoryList;
 	private Discount discount;
-	private DiscountHandler nextHandler;
 	private Set<String> paths;
 	
 	public Item() {
-		
+		this.id = UUID.randomUUID().toString();
 	}
 
-	public Item(String label, double mrp) {
+	public Item(String label, String description, double mrp) {
 		super();
 		this.label = label;
+		this.description = description;
 		this.mrp = mrp;
 		this.code = generateCode("sku", label);
+		this.id = UUID.randomUUID().toString();
 	}
 
-	public Item(String label, double mrp, Discount discount) {
+	public Item(String label, String description, double mrp, Discount discount) {
 		super();
 		this.label = label;
+		this.description = description;
 		this.mrp = mrp;
 		this.discount = discount;
 		this.code = generateCode("sku", label);
+		this.id = UUID.randomUUID().toString();
+	}
+	
+	public String getId() {
+		return id;
 	}
 	
 	public void addPath(String path) {
@@ -51,20 +66,12 @@ public class Item implements CatalogComponent {
 		}
 	}
 
-	public void addItemCategory(final Category category) {
-		if (categoryList == null) {
-			categoryList = new ArrayList<>();
-		}
-
-		categoryList.add(category);
-	}
-
-	public void removeItemFromCategory(final Category category) {
-		categoryList.remove(category);
-	}
-
 	public void setLabel(String label) {
 		this.label = label;
+	}
+	
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public double getMrp() {
@@ -75,14 +82,6 @@ public class Item implements CatalogComponent {
 		this.mrp = mrp;
 	}
 
-	public List<Category> getCategoryList() {
-		return categoryList;
-	}
-
-	public void setCategoryList(List<Category> categoryList) {
-		this.categoryList = categoryList;
-	}
-
 	@Override
 	public String getLabel() {
 		return label;
@@ -90,31 +89,11 @@ public class Item implements CatalogComponent {
 
 	@Override
 	public String getDescription() {
-		return null;
+		return description;
 	}
 
-	@Override
-	public PriceBreakup processDiscount(PriceBreakup priceBreakup) {
-		if (priceBreakup == null) {
-			priceBreakup = new PriceBreakup();
-		}
-
-		if(discount != null && discount.getDiscountPercent() > 0) {
-			priceBreakup.addDiscount(discount);
-		}
-		
-		
-		return nextHandler.processDiscount(priceBreakup);
-	}
-	
 	public Set<String> getPaths() {
 		return paths;
-	}
-
-	@Override
-	public void setNextDiscountHandler(DiscountHandler discountHandler) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -134,5 +113,13 @@ public class Item implements CatalogComponent {
 	@Override
 	public List<CatalogComponent> getChildren() {
 		return null;
+	}
+	
+	public void setCode(String code) {
+		this.code = code;
+	}
+	
+	public void setId(String id) {
+		this.id = id;
 	}
 }

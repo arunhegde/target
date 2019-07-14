@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.util.StringUtils;
 
@@ -67,29 +66,11 @@ public class PriceCalculator {
 
 	private CatalogComponent getCatalogComponentByCode(final String code) {
 		if (code.startsWith("cat-")) {
-			return store.getCategory(code);
+			return store.getCategoryByCode(code);
 		} else if (code.startsWith("sku-")) {
-			return store.getItem(code);
+			return store.getItemByCode(code);
 		} else {
 			throw new CatalogServiceException(String.format("Invalid code %s", code));
 		}
-	}
-
-	private Set<Discount> getPromotions(final Category category) {
-		Set<Discount> discounts = new HashSet<>();
-		if (category == null) {
-			return null;
-		}
-
-		Category currentCategory = category;
-		while (currentCategory.getParent() != null) {
-			if (currentCategory.getDiscount() != null) {
-				discounts.add(currentCategory.getDiscount());
-			}
-
-			currentCategory = currentCategory.getParent();
-		}
-
-		return discounts;
 	}
 }

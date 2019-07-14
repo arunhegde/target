@@ -1,6 +1,7 @@
 package com.arunhegde.catalogws.server.main;
 
 import java.io.File;
+import java.util.List;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -39,7 +40,7 @@ public class CatalogLaucherApplication {
 		CatalogStore store = CatalogStore.getInstance(testDbFile);
 		
 		//Add super category baby
-		Category baby = new Category("Baby", "Baby products");
+		Category baby = new Category("Baby", "Baby products", true);
 		store.createCategory(baby);
 		
 		//Add clothing and shoes sub categories to baby
@@ -86,9 +87,9 @@ public class CatalogLaucherApplication {
 		Category bestDeal =  new Category("Best Deal", "Additional discount", new Discount("3% additional discount", 3));
 		store.createCategory(bestDeal);		
 		
-		Item item1 =  new Item("Soft Rubber Ball", 15);
-		Item item2 =  new Item("Toy dumbell", 10);
-		Item item3 = new Item("Battery toy car", 30);
+		Item item1 =  new Item("Soft Rubber Ball", "Soft rubber ball", 15);
+		Item item2 =  new Item("Toy dumbell", "dumbell toy", 10);
+		Item item3 = new Item("Battery toy car", "baby toy car", 30);
 		
 		store.createItem(item1);
 		store.createItem(item2);
@@ -105,11 +106,7 @@ public class CatalogLaucherApplication {
 		store.updateItem(item2);
 		store.updateItem(item3);
 
-		/*PriceCalculator pc = new PriceCalculator();
-		
-		Item item = store.getItem("sku-soft-rubber-ball");
-		PriceBreakup pb = pc.getPriceBreakup(item);
-		
-		System.out.println(item1.getCode() + " final price = " + pb.getTotalDiscount());*/
+		List<Item> items = store.findItem("car", null);
+		System.out.println(items);
 	}
 }

@@ -3,11 +3,23 @@ package com.arunhegde.catalogws.beans;
 import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import org.dizitart.no2.IndexType;
 import org.dizitart.no2.objects.Id;
+import org.dizitart.no2.objects.Index;
+import org.dizitart.no2.objects.Indices;
 
+
+@Indices({
+    	@Index(value = "label", type = IndexType.Unique),
+        @Index(value = "description", type = IndexType.Fulltext),
+        @Index(value = "superCategory", type = IndexType.NonUnique),
+})
 public class Category implements CatalogComponent {
 	@Id
+	private String id;
+	
 	private String code;
 	private String categoryPath;
 	private String label;
@@ -15,9 +27,10 @@ public class Category implements CatalogComponent {
 	private Discount discount;
 	private List<CatalogComponent> children;
 	private Category parent;
+	private boolean superCategory = false;
 
 	public Category() {
-
+		this.id = UUID.randomUUID().toString();
 	}
 
 	public Category(String label, String description) {
@@ -26,6 +39,17 @@ public class Category implements CatalogComponent {
 		this.description = description;
 		this.code = generateCode("cat", label);
 		this.categoryPath = generatePath(code);
+		this.id = UUID.randomUUID().toString();
+	}
+	
+	public Category(String label, String description, boolean isSuperCategory) {
+		super();
+		this.label = label;
+		this.description = description;
+		this.code = generateCode("cat", label);
+		this.categoryPath = generatePath(code);
+		this.superCategory = isSuperCategory;
+		this.id = UUID.randomUUID().toString();
 	}
 
 	public Category(String label, String description, Discount discount) {
@@ -35,6 +59,11 @@ public class Category implements CatalogComponent {
 		this.discount = discount;
 		this.code = generateCode("cat", label);
 		this.categoryPath = generatePath(code);
+		this.id = UUID.randomUUID().toString();
+	}
+	
+	public String getId() {
+		return id;
 	}
 
 	@Override
@@ -56,6 +85,18 @@ public class Category implements CatalogComponent {
 	public List<CatalogComponent> getChildren() {
 		return children;
 	}
+	
+	public boolean isSuperCategory() {
+		return superCategory;
+	}
+
+	public void setSuperCategory(boolean superCategory) {
+		this.superCategory = superCategory;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
 	public String getPath() {
 		return categoryPath;
@@ -71,20 +112,6 @@ public class Category implements CatalogComponent {
 
 	public void removeSubPath(String path) {
 		this.categoryPath.replace("/" + path, "");
-	}
-
-	@Override
-	public PriceBreakup processDiscount(PriceBreakup priceBreakup) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setNextDiscountHandler(DiscountHandler discountHandler) {
-		if (parent != null) {
-			discountHandler.setNextDiscountHandler(parent);
-		}
-
 	}
 
 	public void addItem(final Item... items) {
@@ -166,5 +193,13 @@ public class Category implements CatalogComponent {
 
 	public void setDiscount(Discount discount) {
 		this.discount = discount;
+	}
+	
+	public void setCode(String code) {
+		this.code = code;
+	}
+	
+	public void setId(String id) {
+		this.id = id;
 	}
 }
