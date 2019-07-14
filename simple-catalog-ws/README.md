@@ -73,14 +73,15 @@ Lists all categories
 
 #### Search category
 Supports text search as well as filtering by category code
-##### Search by query
+
+#### Search by query
 *API Path*: ```GET /catalogws/category?q=Boy```
 
 
-##### Filter by category code
+#### Filter by category code
 *API Path*: ```GET /catalogws/category?code=cat-boys```
 
-##### Get category by Id
+#### Get category by Id
 *API Path*: ```GET /catalogws/category/<id>```
 
 
@@ -112,14 +113,14 @@ Lists all items
 
 #### Search item
 Supports text search as well as filtering by item code
-##### Search by query
+#### Search by query
 *API Path*: ```GET /catalogws/item?q=car```
 
 
-##### Filter by item code
+#### Filter by item code
 *API Path*: ```GET /catalogws/item?code=sku-battery-toy-car```
 
-##### Get item by Id
+#### Get item by Id
 *API Path*: ```GET /catalogws/item/<id>```
 
 #### Resources
@@ -129,6 +130,5 @@ Supports text search as well as filtering by item code
 
 ## Authors
 * **Arun Kumar D** 
-
 
 
