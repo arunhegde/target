@@ -21,7 +21,11 @@ public class CatalogLaucherApplication {
 	private static final String testDbFile = "/tmp/test-catalog-ws.db";
 
 	public static void main(String[] args) {
-		buildCatalogStore();
+		if(args.length > 0 && args[0].equalsIgnoreCase("useTestDb")) {
+			System.out.println("Loading test data...");
+			buildCatalogStore();
+		}
+		
 		SpringApplication.run(CatalogLaucherApplication.class, args);
 	}
 	
