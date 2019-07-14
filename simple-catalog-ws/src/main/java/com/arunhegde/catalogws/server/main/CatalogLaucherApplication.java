@@ -10,13 +10,19 @@ import com.arunhegde.catalogws.beans.Category;
 import com.arunhegde.catalogws.beans.Discount;
 import com.arunhegde.catalogws.beans.Item;
 
+/**
+ * The main class to launch springboot application that a some sample data to catalog
+ * 
+ * @author arunkumar
+ *
+ */
 @SpringBootApplication(scanBasePackages = {"com.arunhegde.projects"})
-public class CatalogLaucherWithSampleData {
+public class CatalogLaucherApplication {
 	private static final String testDbFile = "/tmp/test-catalog-ws.db";
 
 	public static void main(String[] args) {
 		buildCatalogStore();
-		SpringApplication.run(CatalogLaucherWithSampleData.class, args);
+		SpringApplication.run(CatalogLaucherApplication.class, args);
 	}
 	
 	private static void buildCatalogStore() {
