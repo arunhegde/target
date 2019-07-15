@@ -8,6 +8,20 @@ A simple microservice written in springboot that provides RESTFul APIs to manage
 Java1.8
 maven
 
+### Design
+We have the following entities
+
+##### Category
+Represents a product category or a discount category. A category can be a super category (root) or a sub category of a category. 
+A category belongs to one parent but can have sub categories in a hierarchical structure.  For super categories parent is null.
+		
+###### 	Item
+Represents a SKU (item). Items are leaf nodes in the category hierarchy. A category can have zero or more items. But an Item can not have any child nodes.
+An item can have multiple categories (parent nodes).
+
+###### 	Discount
+###### 	Catalog
+
 
 ### Installing
 
