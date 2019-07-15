@@ -23,7 +23,6 @@ public class DbSession {
 	}
 	
 	private void init() {
-		ObjectMapper om;
 		db = Nitrite.builder()
 		        .compressed()
 		        .filePath(dbFile)

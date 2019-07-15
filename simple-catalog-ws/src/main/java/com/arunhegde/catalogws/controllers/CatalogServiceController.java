@@ -1,4 +1,4 @@
-package com.arunhegde.projects.controllers;
+package com.arunhegde.catalogws.controllers;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -15,15 +15,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.arunhegde.catalogws.beans.Catalog;
 import com.arunhegde.catalogws.beans.CatalogItemNotFoundException;
-import com.arunhegde.catalogws.beans.CatalogStore;
 import com.arunhegde.catalogws.beans.Category;
 import com.arunhegde.catalogws.beans.Item;
 import com.arunhegde.catalogws.beans.PriceBreakup;
 import com.arunhegde.catalogws.beans.PriceCalculator;
+import com.arunhegde.catalogws.db.CatalogDAO;
 
 @Controller
 /**
- * Defines REST API endpoints
+ * Defines REST API end points
  * 
  * @author arunkumar
  *
@@ -31,12 +31,18 @@ import com.arunhegde.catalogws.beans.PriceCalculator;
 @RequestMapping(value="/catalogws")
 public class CatalogServiceController {
 	
-	CatalogStore store = CatalogStore.getInstance();
+	CatalogDAO dao = CatalogDAO.getInstance();
+	
+	@RequestMapping(method = RequestMethod.GET, value="/")
+	@ResponseBody
+	public String getWelcomeMessage() {
+		return "Welcome to simple catalog service!";
+	}
 	
 	@RequestMapping(method = RequestMethod.GET, value="/catalog")
 	@ResponseBody
 	public List<Catalog> getAllCatalog() {
-		return store.getAllCatalog();
+		return dao.getAllCatalog();
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value="/category", consumes = "application/json", produces = "application/json")
@@ -44,7 +50,7 @@ public class CatalogServiceController {
 	public ResponseEntity<Object> addCatagory(@RequestBody Category category) throws URISyntaxException {
 		//TODO: Validate inputs
 		
-		category = store.createCategory(category);
+		category = dao.createCategory(category);
 		return ResponseEntity
 			    .created(new URI(category.getId()))
 			    .body(category);
@@ -53,7 +59,7 @@ public class CatalogServiceController {
 	@RequestMapping(method = RequestMethod.GET, value="/category/{id}")
 	@ResponseBody
 	public Category getCategoryByCode(@PathVariable("id") String id) {
-		return store.getCategory(id);
+		return dao.getCategory(id);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value="/category")
@@ -61,7 +67,7 @@ public class CatalogServiceController {
 	public List<Category> findCategory(
 			@RequestParam(name = "q", required = false) String query,
 			@RequestParam(name = "code", required = false) String code) {
-		return store.findCategory(query, code);
+		return dao.findCategory(query, code);
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value="/item", consumes = "application/json", produces = "application/json")
@@ -69,7 +75,7 @@ public class CatalogServiceController {
 	public ResponseEntity<Object> addItem(@RequestBody Item item) throws URISyntaxException {
 		//TODO: Validate inputs
 		
-		item = store.createItem(item);
+		item = dao.createItem(item);
 		return ResponseEntity
 			    .created(new URI(item.getId()))
 			    .body(item);
@@ -78,7 +84,7 @@ public class CatalogServiceController {
 	@RequestMapping(method = RequestMethod.GET, value="/item/{id}")
 	@ResponseBody
 	public Item getItemByCode(@PathVariable("id") String id) {
-		return store.getItem(id);
+		return dao.getItem(id);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value="/item")
@@ -86,16 +92,29 @@ public class CatalogServiceController {
 	public List<Item> findItem(
 			@RequestParam(name = "q", required = false) String query,
 			@RequestParam(name = "code", required = false) String code) {
-		return store.findItem(query, code);
+		return dao.findItem(query, code);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value="/item/{id}/price")
 	@ResponseBody
-	public PriceBreakup getItemPrice(@PathVariable("id") String itemCode) {
+	public PriceBreakup getItemPrice(@PathVariable("id") String id) {
 		PriceCalculator pc = new PriceCalculator();
-		Item item = store.getItem(itemCode);
+		Item item = dao.getItem(id);
 		if(item == null) {
 			throw new CatalogItemNotFoundException("itemCode not found");
+		}
+		
+		PriceBreakup pb = pc.getPriceBreakup(item);
+		return pb;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value="/item-by-code/{code}/price")
+	@ResponseBody
+	public PriceBreakup getItemPriceByItemCode(@PathVariable("code") String code) {
+		PriceCalculator pc = new PriceCalculator();
+		Item item = dao.getItemByCode(code);
+		if(item == null) {
+			throw new CatalogItemNotFoundException("code not found");
 		}
 		
 		PriceBreakup pb = pc.getPriceBreakup(item);

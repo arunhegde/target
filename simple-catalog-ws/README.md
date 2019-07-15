@@ -16,7 +16,7 @@ Build using ```./mvnw clean package```
 Run using ```java -jar target/simple-catalog-ws-0.0.1-SNAPSHOT.jar```
 
 If you want to load sample data while the service starts you can pass loadTestDb arguement as follows
-```java -jar target/simple-catalog-ws-0.0.1-SNAPSHOT.jar useTestDb```
+```java -jar target/simple-catalog-ws-0.0.1-SNAPSHOT.jar testMode```
 
 ### REST APIs supported
 The webservice runs on port ```8083```  (configurable)

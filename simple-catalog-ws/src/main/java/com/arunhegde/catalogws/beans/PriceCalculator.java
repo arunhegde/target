@@ -7,8 +7,10 @@ import java.util.Set;
 
 import org.springframework.util.StringUtils;
 
+import com.arunhegde.catalogws.db.CatalogDAO;
+
 public class PriceCalculator {
-	CatalogStore store = CatalogStore.getInstance();
+	CatalogDAO store = CatalogDAO.getInstance();
 
 	public PriceBreakup getPriceBreakup(final Item item) {
 		PriceBreakup priceBreakup = new PriceBreakup();
@@ -19,11 +21,6 @@ public class PriceCalculator {
 		priceBreakup.setDiscounts(discounts);
 
 		double totalDiscount = discounts.stream().mapToDouble(d -> d.getDiscountPercent()).sum();
-		discounts.forEach(d -> {
-			System.out.println(d.getDiscountPercent());
-
-		});
-
 		priceBreakup.setTotalDiscount(totalDiscount);
 
 		double finalPrice = item.getMrp() - (item.getMrp() * totalDiscount) / 100;

@@ -1,4 +1,4 @@
-package com.arunhegde.catalogws.beans;
+package com.arunhegde.catalogws.db;
 
 import static org.dizitart.no2.objects.filters.ObjectFilters.*;
 import static org.dizitart.no2.objects.filters.ObjectFilters.eq;
@@ -11,38 +11,32 @@ import org.dizitart.no2.WriteResult;
 import org.dizitart.no2.objects.ObjectRepository;
 import org.springframework.util.StringUtils;
 
-import com.arunhegde.catalogws.db.DbSession;
+import com.arunhegde.catalogws.beans.Catalog;
+import com.arunhegde.catalogws.beans.Category;
+import com.arunhegde.catalogws.beans.Item;
 
-public class CatalogStore {
+public class CatalogDAO {
 	private ObjectRepository<Category> categoryRepo = null;
 	private ObjectRepository<Item> itemRepo = null;
 	private ObjectRepository<Catalog> catalogRepo = null;
-	private static final String dbFile = "/tmp/simple-catalog-ws.db";
+	public static String DB_FILE = "/tmp/simple-catalog-ws.db";
 
-	private static CatalogStore catalogStore = null;
-	Nitrite db = null;
+	private static CatalogDAO catalogDAO = null;
+	private Nitrite db = null;
 
-	private CatalogStore(String file) {
-		if (file == null) {
-			db = DbSession.getInstance(dbFile).getDb();
-		} else {
-			db = DbSession.getInstance(file).getDb();
-		}
+	private CatalogDAO() {
+		db = DbSession.getInstance(DB_FILE).getDb();
 		categoryRepo = db.getRepository(Category.class);
 		itemRepo = db.getRepository(Item.class);
 		catalogRepo = db.getRepository(Catalog.class);
 	}
 
-	public static CatalogStore getInstance() {
-		return getInstance(null);
-	}
-
-	public static CatalogStore getInstance(String dbFile) {
-		if (catalogStore == null) {
-			catalogStore = new CatalogStore(dbFile);
-			return catalogStore;
+	public static CatalogDAO getInstance() {
+		if (catalogDAO == null) {
+			catalogDAO = new CatalogDAO();
+			return catalogDAO;
 		} else {
-			return catalogStore;
+			return catalogDAO;
 		}
 	}
 
@@ -54,17 +48,17 @@ public class CatalogStore {
 		if (category.getLabel() == null) {
 			throw new IllegalArgumentException("category label can't be null");
 		}
-		
-		if(category.getId() == null) {
+
+		if (category.getId() == null) {
 			category.setId(UUID.randomUUID().toString());
 		}
-		
-		if(category.getCode() == null) {
+
+		if (category.getCode() == null) {
 			category.setCode(generateCode("cat", category.getLabel()));
 		}
-		
+
 		category.setPath(generatePath(category.getCode()));
-		
+
 		categoryRepo.insert(category);
 		if (category.isSuperCategory()) {
 			Catalog catalog = new Catalog(category);
@@ -87,17 +81,17 @@ public class CatalogStore {
 		if (item == null) {
 			throw new IllegalArgumentException("item can't be null");
 		}
-		
-		if(item.getId() == null) {
+
+		if (item.getId() == null) {
 			item.setId(UUID.randomUUID().toString());
 		}
 
-		if(item.getCode() == null) {
+		if (item.getCode() == null) {
 			item.setCode(generateCode("sku", item.getLabel()));
 		}
-		
+
 		item.addPath(generatePath(item.getCode()));
-		
+
 		WriteResult result = itemRepo.insert(item);
 		System.out.println("item created: " + result.toString());
 		return item;
@@ -118,7 +112,7 @@ public class CatalogStore {
 
 		return categoryRepo.find(eq("id", id)).firstOrDefault();
 	}
-	
+
 	public Category getCategoryByCode(final String categoryCode) {
 		if (StringUtils.isEmpty(categoryCode)) {
 			throw new IllegalArgumentException("categoryCode can't be null or empty");
@@ -162,7 +156,7 @@ public class CatalogStore {
 
 		return itemRepo.find(eq("id", id)).firstOrDefault();
 	}
-	
+
 	public Item getItemByCode(final String itemCode) {
 		if (StringUtils.isEmpty(itemCode)) {
 			throw new IllegalArgumentException("itemCode can't be null or empty");
@@ -170,11 +164,11 @@ public class CatalogStore {
 
 		return itemRepo.find(eq("code", itemCode)).firstOrDefault();
 	}
-	
+
 	private String generateCode(String prefix, String label) {
 		return prefix + "-" + label.replace(" ", "-").toLowerCase();
 	}
-	
+
 	private String generatePath(String code) {
 		return "/" + code;
 	}
